@@ -1,0 +1,31 @@
+version: '3.5'
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.6.14
+    environment:
+      xpack.security.enabled: "false"
+    ports:
+    - 9200:9200
+  logstash:
+    image: logstash:5.6.14
+    links:
+    - elasticsearch:elasticsearch
+    environment:
+      - "ES_JAVA_OPTS=-Xmx256m -Xms256m"
+      - cluster.routing.allocation.disk.threshold_enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+    - 12201:12201/udp
+    - 12202:12202
+    command: logstash -e 'input { gelf { port => "12201" } log4j { mode => "server" port => "12202"} } output { elasticsearch { hosts => ["elasticsearch"] } }'
+  kibana:
+    image: kibana:5.6.14
+    links:
+    - elasticsearch:elasticsearch
+    ports:
+    - 5601:5601
+    environment:
+    - ELASTICSEARCH_URL=http://elasticsearch:9200

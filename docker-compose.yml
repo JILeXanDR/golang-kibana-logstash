@@ -1,0 +1,30 @@
+version: '3.5'
+services:
+  mongo1:
+    container_name: alex_mongo_1
+    image: mongo:4.0.5
+    networks:
+      - mongo-network
+    ports:
+      - 30000:27017
+    command: mongod --replSet mongo-network
+  mongo2:
+    container_name: alex_mongo_2
+    image: mongo:4.0.5
+    networks:
+      - mongo-network
+    ports:
+      - 30001:27017
+    command: mongod --replSet mongo-network
+  mongo3:
+    container_name: alex_mongo_3
+    image: mongo:4.0.5
+    networks:
+      - mongo-network
+    ports:
+      - 30002:27017
+    command: mongod --replSet mongo-network
+networks:
+  mongo-network:
+    external: true
+    name: mongo-network
