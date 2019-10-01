@@ -10,6 +10,7 @@ func NewLogger(logstashServer string) *logrus.Logger {
 	logger := logrus.New()
 
 	logger.SetLevel(logrus.TraceLevel)
+	logger.SetFormatter(&logrus.JSONFormatter{})
 
 	hook := graylog.NewGraylogHook(logstashServer, map[string]interface{}{})
 	logger.AddHook(hook)
